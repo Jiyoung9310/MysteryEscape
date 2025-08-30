@@ -1,6 +1,11 @@
 
 import { GoogleGenAI, Type } from "@google/genai";
 
+// Vercel에 이 함수를 Edge Runtime에서 실행하도록 지시합니다.
+export const config = {
+  runtime: 'edge',
+};
+
 // 이 파일은 독립적인 서버리스 함수이므로, 필요한 타입과 상수를 여기에 직접 정의합니다.
 // 실제 모노레포(monorepo) 환경에서는 공통 패키지에서 이들을 공유할 수 있습니다.
 
@@ -152,6 +157,7 @@ const responseSchema = {
 // Vercel과 같은 호스팅 환경에서는 `process.env`를 통해 환경 변수에 접근할 수 있습니다.
 const apiKey = process.env.API_KEY;
 
+// API 키가 없으면 함수가 시작되지 않도록 하여 오류를 방지합니다.
 if (!apiKey) {
     throw new Error("API_KEY 환경 변수가 설정되지 않았습니다.");
 }
@@ -198,12 +204,20 @@ ${JSON.stringify(currentState, null, 2)}
         });
 
         const jsonText = response.text.trim();
-        const parsedResponse: GeminiResponse = JSON.parse(jsonText);
-
-        return new Response(JSON.stringify(parsedResponse), {
-            status: 200,
-            headers: { 'Content-Type': 'application/json' },
-        });
+        // Gemini가 유효하지 않은 JSON을 반환할 경우를 대비한 추가적인 오류 처리
+        try {
+            const parsedResponse: GeminiResponse = JSON.parse(jsonText);
+            return new Response(JSON.stringify(parsedResponse), {
+                status: 200,
+                headers: { 'Content-Type': 'application/json' },
+            });
+        } catch (parseError) {
+             console.error("JSON 파싱 오류:", parseError, "원본 텍스트:", jsonText);
+             return new Response(JSON.stringify({ error: 'AI로부터 유효하지 않은 응답을 받았습니다.' }), {
+                status: 500,
+                headers: { 'Content-Type': 'application/json' },
+            });
+        }
 
     } catch (error) {
         console.error("서버리스 함수 오류:", error);
