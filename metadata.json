@@ -1,0 +1,5 @@
+{
+  "name": "Mystery Escape: The Locked Study",
+  "description": "A text-based escape room game with a mystery novel theme, powered by Gemini. Players solve puzzles in a locked study to uncover the story and find their way out.",
+  "requestFramePermissions": []
+}
