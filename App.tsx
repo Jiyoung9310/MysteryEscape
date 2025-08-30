@@ -83,11 +83,11 @@ const App: React.FC = () => {
   }
 
   return (
-    <div className="bg-zinc-900 text-gray-300 min-h-screen flex flex-col items-center justify-center p-4 selection:bg-amber-600 selection:text-white" style={{backgroundImage: `url('https://picsum.photos/seed/mystery/1920/1080')`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundBlendMode: 'overlay', backgroundColor: 'rgba(24, 24, 27, 0.8)'}}>
-      <div className="w-full max-w-5xl h-[90vh] bg-black/60 backdrop-blur-sm shadow-2xl shadow-black/50 rounded-lg border border-zinc-700 flex flex-col overflow-hidden">
+    <div className="bg-zinc-900 text-gray-300 h-screen flex flex-col items-center justify-center p-2 sm:p-4 selection:bg-amber-600 selection:text-white" style={{backgroundImage: `url('https://picsum.photos/seed/mystery/1920/1080')`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundBlendMode: 'overlay', backgroundColor: 'rgba(24, 24, 27, 0.8)'}}>
+      <div className="w-full max-w-5xl h-full bg-black/60 backdrop-blur-sm shadow-2xl shadow-black/50 rounded-lg border border-zinc-700 flex flex-col overflow-hidden">
         <GameHeader onRestart={restartGame} isMuted={isMuted} onToggleMute={toggleMute} />
         <div className="flex-grow flex flex-col md:flex-row overflow-hidden">
-          <main className="flex-grow flex flex-col p-4 md:p-6 w-full md:w-2/3 overflow-hidden">
+          <main className="flex-grow flex flex-col p-3 sm:p-4 md:p-6 w-full md:w-2/3 overflow-hidden">
             <GameScreen output={outputText} />
             <div className="mt-auto pt-4">
               {isLoading && <LoadingSpinner />}
@@ -95,7 +95,7 @@ const App: React.FC = () => {
               <InputBar onCommand={handleCommand} disabled={isLoading || gameState.gameWon} gameWon={gameState.gameWon} />
             </div>
           </main>
-          <aside className="w-full md:w-1/3 bg-black/30 border-t md:border-t-0 md:border-l border-zinc-700 p-4 md:p-6 overflow-y-auto">
+          <aside className="w-full md:w-1/3 bg-black/30 border-t md:border-t-0 md:border-l border-zinc-700 p-3 sm:p-4 md:p-6 overflow-y-auto">
             <Inventory items={gameState.inventory} />
           </aside>
         </div>

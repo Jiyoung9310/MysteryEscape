@@ -15,7 +15,7 @@ const Inventory: React.FC<InventoryProps> = ({ items }) => {
 
   return (
     <div className="h-full">
-      <h2 className="text-2xl font-bold font-serif text-amber-400 border-b-2 border-amber-600/30 pb-2 mb-4">소지품</h2>
+      <h2 className="text-xl sm:text-2xl font-bold font-serif text-amber-400 border-b-2 border-amber-600/30 pb-2 mb-4">소지품</h2>
       {items.length === 0 ? (
         <p className="text-zinc-400 italic">아무것도 가지고 있지 않습니다.</p>
       ) : (
@@ -25,7 +25,7 @@ const Inventory: React.FC<InventoryProps> = ({ items }) => {
             if (!item) return null;
             return (
               <li key={itemKey} className="bg-zinc-800/50 p-3 rounded-md border border-zinc-700">
-                <p className="text-lg font-semibold text-white">{item.icon} {item.name}</p>
+                <p className="text-base sm:text-lg font-semibold text-white">{item.icon} {item.name}</p>
                 <p className="text-sm text-zinc-400">{item.description}</p>
               </li>
             );
