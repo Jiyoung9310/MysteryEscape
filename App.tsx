@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect, useRef } from 'react';
+import { Analytics } from '@vercel/analytics/react';
 import { GameState, OutputLine } from './types';
 import { INITIAL_GAME_STATE, INITIAL_NARRATIVE } from './constants';
 import { processPlayerCommand } from './services/geminiService';
@@ -104,6 +105,7 @@ const App: React.FC = () => {
           Music by <a href="https://pixabay.com/ko/users/shadowsandechoes-30244426/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=153817" target="_blank" rel="noopener noreferrer" className="underline hover:text-amber-400 transition-colors">Shadows And Echoes</a> from <a href="https://pixabay.com/music//?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=153817" target="_blank" rel="noopener noreferrer" className="underline hover:text-amber-400 transition-colors">Pixabay</a>
         </p>
       </footer>
+      <Analytics />
     </div>
   );
 };
