@@ -1,65 +1,29 @@
 
-import { GoogleGenAI, Type } from "@google/genai";
 import { GameState, GeminiResponse } from '../types';
-import { SYSTEM_INSTRUCTION } from '../constants';
-
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY as string });
-
-const responseSchema = {
-    type: Type.OBJECT,
-    properties: {
-        narrative: { type: Type.STRING },
-        updatedGameState: {
-            type: Type.OBJECT,
-            properties: {
-                currentRoom: { type: Type.STRING },
-                inventory: {
-                    type: Type.ARRAY,
-                    items: { type: Type.STRING }
-                },
-                roomStates: {
-                    type: Type.OBJECT,
-                    properties: {
-                        isDeskDrawerLocked: { type: Type.BOOLEAN },
-                        isSafeHidden: { type: Type.BOOLEAN },
-                        isSafeLocked: { type: Type.BOOLEAN },
-                        isMainDoorLocked: { type: Type.BOOLEAN },
-                        hasReadDiary: { type: Type.BOOLEAN },
-                        hasFoundNoteInPen: { type: Type.BOOLEAN },
-                    }
-                },
-                gameWon: { type: Type.BOOLEAN }
-            }
-        }
-    }
-};
 
 export const processPlayerCommand = async (command: string, currentState: GameState): Promise<GeminiResponse> => {
     try {
-        const prompt = `
-플레이어의 현재 상태:
-${JSON.stringify(currentState, null, 2)}
-
-플레이어의 명령: "${command}"
-
-위 정보를 바탕으로 게임을 진행하고, 다음에 보여줄 서술(narrative)과 업데이트된 게임 상태(updatedGameState)를 JSON 형식으로 반환하세요.
-`;
-
-        const response = await ai.models.generateContent({
-            model: "gemini-2.5-flash",
-            contents: prompt,
-            config: {
-                systemInstruction: SYSTEM_INSTRUCTION,
-                responseMimeType: "application/json",
-                responseSchema: responseSchema,
+        // Gemini API를 직접 호출하는 대신, 자체 서버리스 함수 엔드포인트를 호출합니다.
+        const response = await fetch('/api/gemini', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
             },
+            body: JSON.stringify({ command, currentState }),
         });
 
-        const jsonText = response.text.trim();
-        const parsedResponse: GeminiResponse = JSON.parse(jsonText);
-        return parsedResponse;
+        if (!response.ok) {
+            const errorBody = await response.json().catch(() => ({}));
+            console.error('API 서버 오류:', errorBody);
+            throw new Error(`API 호출이 다음 상태 코드로 실패했습니다: ${response.status}. ${errorBody.error || ''}`.trim());
+        }
+
+        const result: GeminiResponse = await response.json();
+        return result;
+
     } catch (error) {
-        console.error("Gemini API Error:", error);
-        throw new Error("Failed to process command with Gemini API.");
+        console.error("API Fetch 오류:", error);
+        // App 컴포넌트에서 처리할 수 있도록 더 사용자 친화적인 오류를 다시 던집니다.
+        throw new Error("게임 서버와 통신하는 데 실패했습니다.");
     }
 };
